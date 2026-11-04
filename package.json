@@ -11,6 +11,7 @@
     "test": "node --test \"packages/originproof-engine/test/*.test.js\" \"tests/**/*.test.js\"",
     "test:engine": "node --test \"packages/originproof-engine/test/*.test.js\"",
     "test:reference": "node --test \"tests/originproof-reference/*.test.js\"",
-    "test:architecture": "node --test \"tests/architecture/*.test.js\""
+    "test:architecture": "node --test \"tests/architecture/*.test.js\"",
+    "build": "node scripts/build.mjs"
   }
 }
