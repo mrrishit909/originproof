@@ -26,7 +26,7 @@ const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
 const state = { ran: false, result: null, analysis: null, report: null, notes: [], lastButton: null };
 
 $('synthetic-label').textContent = SYNTHETIC_LABEL;
-for (const f of FIXTURES) { const o = el('option', f); o.value = f; $('fixture').appendChild(o); }
+for (const f of FIXTURES) { const o = el('option', f); o.value = f; $('fixture-select').appendChild(o); }
 
 function showState(s) {
   for (const k of ['empty', 'error', 'zero', 'findings']) $(`state-${k}`).hidden = k !== s;
@@ -35,7 +35,7 @@ function showState(s) {
 }
 
 async function run() {
-  const name = $('fixture').value;
+  const name = $('fixture-select').value;
   $('run').disabled = true; $('run-status').textContent = 'Loading…';
   state.lastButton = null; state.report = null; state.analysis = null; state.notes = [];
   try {
