@@ -51,7 +51,7 @@ test('canonicalJson sorts keys recursively with no whitespace', () => {
 test('buildReport produces a deep-frozen report with exactly the contract keys', async () => {
   const { analysis, notes, fingerprint, report } = await goldenReport();
   assert.deepEqual(Object.keys(report).sort(), REPORT_KEYS);
-  assert.equal(report.schemaVersion, 'originproof.report.v1');
+  assert.equal(report.schemaVersion, 'originproof.report.v2');
   assert.equal(report.dataClassification, 'SYNTHETIC');
   assert.equal(report.syntheticLabel, SYNTHETIC_LABEL);
   assert.equal(report.engineContractVersion, 'originproof.engine.v1');
@@ -130,7 +130,7 @@ test('tampered reports fail with REPORT_MISMATCH; strict schema failures never t
 
   const strictFailures = [
     tamper((o) => { o.extra = 1; }),
-    tamper((o) => { o.schemaVersion = 'originproof.report.v2'; }),
+    tamper((o) => { o.schemaVersion = 'originproof.report.v1'; }), // retired: v1 carried invented lineage paths
     tamper((o) => { o.schemaVersion = 1; }),
     tamper((o) => { delete o.syntheticLabel; }),
     tamper((o) => { delete o.dataClassification; }),

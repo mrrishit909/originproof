@@ -10,7 +10,7 @@ import { MAX_NESTING_DEPTH, deepFreeze, fail, hasOwn, isPlainData, isPlainObject
 const PLAIN_DATA_MESSAGE = `Value must be plain JSON data (finite numbers, dense arrays, plain objects) nested at most ${MAX_NESTING_DEPTH} levels`;
 import { RULE_VERSION } from './validate.js';
 
-export const REPORT_SCHEMA_VERSION = 'originproof.report.v1';
+export const REPORT_SCHEMA_VERSION = 'originproof.report.v2';
 const HEX64 = /^[0-9a-f]{64}$/;
 const OPTION_KEYS = Object.freeze(['analysis', 'reviewNotes', 'generatedAt', 'semanticFingerprint']);
 const REPORT_KEYS = Object.freeze([

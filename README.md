@@ -85,7 +85,7 @@ frozen list of exported names is itself exported as `ENGINE_PUBLIC_API`, and
 | `MAX_NOTE_LENGTH` | `2000` |
 | `DATA_CLASSIFICATION` | `'SYNTHETIC'` |
 | `SYNTHETIC_LABEL` | human-readable label containing "SYNTHETIC" and "not customs law" |
-| `REPORT_SCHEMA_VERSION` | `'originproof.report.v1'` |
+| `REPORT_SCHEMA_VERSION` | `'originproof.report.v2'` |
 | `CSV_EXPORT_COLUMNS` | `record_type,id,rule_id,rule_version,supplier_id,document_id,kind,field,expected,observed,delta_units,text,data_classification` |
 | `LIMITATIONS` | frozen, non-empty string array embedded in every analysis and report |
 | `ENGINE_PUBLIC_API` | frozen sorted array of every exported name |
@@ -98,7 +98,7 @@ frozen list of exported names is itself exported as `ENGINE_PUBLIC_API`, and
 | `validateShipment(value)` | `Result<Shipment>` | Strict, atomic schema validation. Returns a deep-frozen canonical clone with records verbatim in input order. |
 | `analyze(value)` | `Result<Analysis>` | Re-validates, then evaluates OP01/OP02/OP03. Invalid input → `ok:false` and **no** findings. |
 | `appendReviewNote(history, note, analysis)` | `Result<ReviewNote[]>` | Returns a new frozen array; never mutates `history`. Note text is inert and never interpreted. |
-| `buildReport({analysis, reviewNotes, generatedAt, semanticFingerprint})` | `Result<Report>` | Deep-frozen report (`schemaVersion:'originproof.report.v1'`). |
+| `buildReport({analysis, reviewNotes, generatedAt, semanticFingerprint})` | `Result<Report>` | Deep-frozen report (`schemaVersion:'originproof.report.v2'`). |
 | `serializeReportJson(report)` | `string` | Sorted keys, 2-space indent, LF, trailing newline. |
 | `parseReportJson(textOrBytes)` | `Result<Report>` | Strict re-import; recomputes the analysis from `report.input` and fails with `REPORT_MISMATCH` if findings/counts differ. Never throws. Round-trips `serializeReportJson` exactly. |
 | `serializeReportCsv(report)` | `string` | CRLF rows, every cell double-quoted, formula-safe (see below). Row groups in order `META, COUNT, EVIDENCE, FINDING, REVIEW_NOTE`; every row carries `data_classification = SYNTHETIC`. |
@@ -112,8 +112,8 @@ frozen list of exported names is itself exported as `ENGINE_PUBLIC_API`, and
 - **Shipment**: `{schemaVersion:1, ruleVersion:'OP-DEMO-1', shipment:{id, declaredCountry, quantityUnits}, suppliers:[{id,name}], edges:[{id, fromSupplierId, toSupplierId}], documents:[{id, shipmentId, supplierId, kind, country, quantityUnits}], requiredEvidence:[{supplierId, kind}]}`. Edges are upstream → downstream and must form a DAG.
 - **Analysis**: `{engineContractVersion, schemaVersion, ruleVersion, dataClassification, syntheticLabel, input, status, findings, counts, evidence, lineage, limitations}`.
   `counts = {findings, byRule:{OP01,OP02,OP03}, suppliers, edges, documents, originDocuments, productionDocuments, requiredPairs, fulfilledPairs, quantityMismatchAbsoluteUnits}`.
-  `lineage = {order, suppliers:[{supplierId, upstream, downstream, path}], documents:[{documentId, supplierId, path}]}`.
-- **Finding**: `{findingId, ruleId, ruleVersion, severity:'REVIEW_REQUIRED', subject, field, expected, observed, deltaUnits, inputRefs:[{pointer, recordType, recordId, value}], path, rationale, source:{rulePack:'OP-DEMO-1', clause, illustrative:true}}`.
+  `lineage = {order, suppliers:[{supplierId, upstream, downstream, edges}], documents:[{documentId, supplierId, edges}]}`; `edges` are the real input edges (`{id, fromSupplierId, toSupplierId}`) on routes through that supplier, never a concatenated node list (v1 `path` invented hops between unconnected suppliers; OP-A02).
+- **Finding**: `{findingId, ruleId, ruleVersion, severity:'REVIEW_REQUIRED', subject, field, expected, observed, deltaUnits, inputRefs:[{pointer, recordType, recordId, value}], edges, rationale, source:{rulePack:'OP-DEMO-1', clause, illustrative:true}}`.
   Stable ids: `OP01:<supplierId>:<kind>`, `OP02:<docId>`, `OP03:<docId>`. Findings are ordered by rule, then by `findingId` (code-unit order).
 - **ReviewNote**: `{sequence, findingId, text, recordedAt:'YYYY-MM-DDThh:mm:ssZ'}`; `sequence` strictly increases, `findingId` must exist in the analysis.
 
@@ -207,7 +207,7 @@ engine-level coverage only, since this slice has no UI.
 | 2 | Inspect source records | `analysis.input` is the verbatim, frozen shipment | `golden.test.js` |
 | 3 | Run validation | `validateShipment` / `analyze` | `golden.test.js`, `adversarial.test.js` |
 | 4 | Filter findings | `findings[].ruleId` / `severity` / `subject`; `counts.byRule` matches a filter | `golden.test.js` |
-| 5 | Open one finding, its cited inputs and rule version | `inputRefs` (sorted pointers), `path`, `source.{rulePack,clause}`, `ruleVersion` | `golden.test.js` |
+| 5 | Open one finding, its cited inputs and rule version | `inputRefs` (sorted pointers), `edges`, `source.{rulePack,clause}`, `ruleVersion` | `golden.test.js` |
 | 6 | Record a human review note | `appendReviewNote` (separate from findings, inert text) | `review-notes.test.js` |
 | 7 | Export JSON report (and CSV) | `buildReport`, `serializeReportJson`, `serializeReportCsv` | `export.test.js` |
 | 8 | Re-import exported report and compare findings | `parseReportJson` round-trip + `REPORT_MISMATCH` on tampering | `export.test.js` |

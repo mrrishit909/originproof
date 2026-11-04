@@ -84,8 +84,8 @@ test('golden fixture yields exactly the three expected findings with exact count
   assert.equal(a.findings[2].expected, 100);
   assert.equal(a.findings[2].observed, 90);
   assert.equal(a.findings[2].deltaUnits, -10);
-  assert.deepEqual(a.findings[1].path, ['RAW-1', 'MILL-1', 'ASSEMBLER-1']);
-  assert.deepEqual(a.lineage.documents.find((d) => d.documentId === 'DOC-2').path, ['RAW-1', 'MILL-1', 'ASSEMBLER-1']);
+  assert.deepEqual(a.findings[1].edges, [{ id: 'EDGE-1', fromSupplierId: 'RAW-1', toSupplierId: 'MILL-1' }, { id: 'EDGE-2', fromSupplierId: 'MILL-1', toSupplierId: 'ASSEMBLER-1' }]);
+  assert.deepEqual(a.lineage.documents.find((d) => d.documentId === 'DOC-2').edges, [{ id: 'EDGE-1', fromSupplierId: 'RAW-1', toSupplierId: 'MILL-1' }, { id: 'EDGE-2', fromSupplierId: 'MILL-1', toSupplierId: 'ASSEMBLER-1' }]);
   assert.equal(a.findings[0].subject.supplierId, 'MILL-1');
   assert.equal(a.findings[0].subject.kind, 'production');
   assert.equal(a.findings[1].inputRefs[0].pointer, '/documents/1/country');
@@ -299,4 +299,27 @@ test('OP-A01: aggregate OP03 discrepancy above MAX_SAFE_INTEGER is rejected atom
   assert.equal(accepted.ok, true);
   assert.equal(accepted.value.counts.quantityMismatchAbsoluteUnits, Number.MAX_SAFE_INTEGER);
   assert.equal(accepted.value.counts.byRule.OP03, 2);
+});
+
+test('OP-A02: lineage lists only real edges on routes through the subject, never invented adjacency', () => {
+  // Codex repro: A->C and B->C, origin document at C with a country mismatch. A and B are not connected.
+  const input = {
+    schemaVersion: 1,
+    ruleVersion: 'OP-DEMO-1',
+    shipment: { id: 'SHIP-1', declaredCountry: 'AA', quantityUnits: 100 },
+    suppliers: [{ id: 'A', name: 'Synthetic A (fictional)' }, { id: 'B', name: 'Synthetic B (fictional)' }, { id: 'C', name: 'Synthetic C (fictional)' }],
+    edges: [{ id: 'E1', fromSupplierId: 'A', toSupplierId: 'C' }, { id: 'E2', fromSupplierId: 'B', toSupplierId: 'C' }],
+    documents: [{ id: 'DOC-C', shipmentId: 'SHIP-1', supplierId: 'C', kind: 'origin', country: 'BB', quantityUnits: 100 }],
+    requiredEvidence: [{ supplierId: 'C', kind: 'origin' }],
+  };
+  const a = analyze(input);
+  assert.equal(a.ok, true);
+  const f = a.value.findings.find((x) => x.findingId === 'OP02:DOC-C');
+  assert.deepEqual(f.edges, [{ id: 'E1', fromSupplierId: 'A', toSupplierId: 'C' }, { id: 'E2', fromSupplierId: 'B', toSupplierId: 'C' }]);
+  assert.equal(f.edges.some((e) => e.fromSupplierId === 'A' && e.toSupplierId === 'B'), false);
+  assert.equal('path' in f, false);
+  const bySupplier = Object.fromEntries(a.value.lineage.suppliers.map((s) => [s.supplierId, s]));
+  // E2 (B->C) is not on any route through A, so A's lineage must not show it.
+  assert.deepEqual(bySupplier.A.edges, [{ id: 'E1', fromSupplierId: 'A', toSupplierId: 'C' }]);
+  assert.deepEqual(bySupplier.A.downstream, ['C']);
 });

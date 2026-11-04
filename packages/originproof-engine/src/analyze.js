@@ -33,7 +33,11 @@ function ref(ptr, recordType, recordId, value) {
   return { pointer: ptr, recordType, recordId, value };
 }
 
-/** Builds topological order plus upstream/downstream lineage for every supplier and document. */
+/**
+ * Builds topological order plus upstream/downstream lineage for every supplier and document.
+ * `edges` holds only real input edges that lie on a route through the supplier (inside its ancestors
+ * or inside its descendants), so no adjacency is ever invented between unconnected suppliers (OP-A02).
+ */
 export function buildLineage(input) {
   const ids = input.suppliers.map((s) => s.id);
   const { order } = topologicalOrder(ids, input.edges);
@@ -62,10 +66,17 @@ export function buildLineage(input) {
   const suppliers = ids.map((id) => {
     const upstream = closure(id, parents);
     const downstream = closure(id, children);
-    return { supplierId: id, upstream, downstream, path: [...upstream, id, ...downstream] };
+    const before = new Set([...upstream, id]);
+    const after = new Set([id, ...downstream]);
+    const within = (set, e) => set.has(e.fromSupplierId) && set.has(e.toSupplierId);
+    const edges = input.edges
+      .filter((e) => within(before, e) || within(after, e))
+      .map((e) => ({ id: e.id, fromSupplierId: e.fromSupplierId, toSupplierId: e.toSupplierId }))
+      .sort((a, b) => position.get(a.fromSupplierId) - position.get(b.fromSupplierId) || position.get(a.toSupplierId) - position.get(b.toSupplierId) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    return { supplierId: id, upstream, downstream, edges };
   });
   const bySupplier = new Map(suppliers.map((s) => [s.supplierId, s]));
-  const documents = input.documents.map((d) => ({ documentId: d.id, supplierId: d.supplierId, path: bySupplier.get(d.supplierId).path }));
+  const documents = input.documents.map((d) => ({ documentId: d.id, supplierId: d.supplierId, edges: bySupplier.get(d.supplierId).edges }));
   return { order, suppliers, documents, bySupplier };
 }
 
@@ -102,7 +113,7 @@ export function analyze(value) {
         ref(pointer('suppliers', supplierIndex.get(e.supplierId), 'id'), 'supplier', e.supplierId, e.supplierId),
         ref(pointer('shipment', 'id'), 'shipment', shipment.id, shipment.id),
       ]),
-      path: lineage.bySupplier.get(e.supplierId).path,
+      edges: lineage.bySupplier.get(e.supplierId).edges,
       rationale: `Required evidence pair ${e.supplierId}/${e.kind} has no matching document for shipment ${shipment.id} under fictional rule pack OP-DEMO-1 (OP01). Review only; not a legal determination.`,
       source: source('OP01'),
     }));
@@ -117,7 +128,7 @@ export function analyze(value) {
   let overflowPointer = null;
   input.documents.forEach((doc, i) => {
     if (doc.kind !== 'origin') return;
-    const path = lineage.bySupplier.get(doc.supplierId).path;
+    const edges = lineage.bySupplier.get(doc.supplierId).edges;
     if (doc.country !== shipment.declaredCountry) {
       op02.push({
         findingId: `OP02:${doc.id}`,
@@ -133,7 +144,7 @@ export function analyze(value) {
           ref(pointer('documents', i, 'country'), 'document', doc.id, doc.country),
           ref(pointer('shipment', 'declaredCountry'), 'shipment', shipment.id, shipment.declaredCountry),
         ]),
-        path,
+        edges,
         rationale: `Origin document ${doc.id} records country ${doc.country}; shipment ${shipment.id} declares ${shipment.declaredCountry} (OP02, fictional rule pack OP-DEMO-1). Labels are fictional; review only.`,
         source: source('OP02'),
       });
@@ -159,7 +170,7 @@ export function analyze(value) {
           ref(pointer('documents', i, 'quantityUnits'), 'document', doc.id, doc.quantityUnits),
           ref(pointer('shipment', 'quantityUnits'), 'shipment', shipment.id, shipment.quantityUnits),
         ]),
-        path,
+        edges,
         rationale: `Origin document ${doc.id} records ${doc.quantityUnits} units; shipment ${shipment.id} declares ${shipment.quantityUnits} units (delta ${delta}) (OP03, fictional rule pack OP-DEMO-1). Review only.`,
         source: source('OP03'),
       });

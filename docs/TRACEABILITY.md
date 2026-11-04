@@ -41,7 +41,7 @@ All data is SYNTHETIC; rule pack OP-DEMO-1 is fictional and not customs law.
 | Origin documents 3, required pairs 4, fulfilled pairs 3 | `golden.test.js` :: "counts originDocuments/requiredPairs/fulfilledPairs" (expected) |
 | Quantity mismatch total absolute units 10 | `golden.test.js` :: "quantityMismatchAbsoluteUnits is 10" (expected) |
 | Do not sum repeated document quantities as throughput | `golden.test.js` :: "no throughput sum in counts" (expected) |
-| DOC-2 path RAW-1→MILL-1→ASSEMBLER-1 inspectable | `golden.test.js` :: "OP02:DOC-2 path and lineage.documents" (expected) |
+| DOC-2 lineage edges EDGE-1 RAW-1→MILL-1, EDGE-2 MILL-1→ASSEMBLER-1 inspectable; no invented adjacency (OP-A02, `engine.test.js` OP-A02 case) | `golden.test.js` :: "OP02:DOC-2 path and lineage.documents" (expected) |
 | Status vocabulary: `FINDINGS_PRESENT` / `NO_FINDINGS`, never compliant/certified | `golden.test.js` :: "status is FINDINGS_PRESENT; no certification vocabulary" (expected) |
 | Clean variant (DOC-4 MILL-1 production AA 100; DOC-2 AA; DOC-3 100) → zero findings, fulfilled 4/4 | `golden.test.js` :: "clean variant: zero findings, fulfilled 4/4, NO_FINDINGS" (expected) |
 
@@ -109,7 +109,7 @@ All data is SYNTHETIC; rule pack OP-DEMO-1 is fictional and not customs law.
 | Condition | Expected covering test |
 |---|---|
 | Count mismatch | `golden.test.js` counts cases; `export.test.js` :: `REPORT_MISMATCH` on tampered report (expected) |
-| Untraceable finding | `golden.test.js` :: every finding has non-empty `inputRefs`, `path`, `source.clause` (expected) |
+| Untraceable finding | `golden.test.js` :: every finding has non-empty `inputRefs`, `edges`, `source.clause` (expected) |
 | Unsafe input handling | `adversarial.test.js` (expected); `tests/architecture/boundaries.test.js` |
 | False certification claim | `golden.test.js` :: status vocabulary (expected); README and `SYNTHETIC_LABEL` wording |
 | No production-readiness claim; expert/privacy/security review precede deployment | **NOT VERIFIED** (process; `docs/LIMITATIONS.md` item 19) |

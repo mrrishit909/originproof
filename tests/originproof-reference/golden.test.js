@@ -9,6 +9,11 @@ import { assertDeepFrozen, expectOk } from './helpers.js';
 const { analyze, parseShipmentJson, validateShipment } = engine;
 
 const CHAIN = ['RAW-1', 'MILL-1', 'ASSEMBLER-1'];
+// Real input edges of the linear golden chain; lineage reports these, never a node list (OP-A02).
+const CHAIN_EDGES = [
+  { id: 'EDGE-1', fromSupplierId: 'RAW-1', toSupplierId: 'MILL-1' },
+  { id: 'EDGE-2', fromSupplierId: 'MILL-1', toSupplierId: 'ASSEMBLER-1' },
+];
 const GOLDEN_FINDING_IDS = ['OP01:MILL-1:production', 'OP02:DOC-2', 'OP03:DOC-3'];
 const GOLDEN_COUNTS = {
   findings: 3,
@@ -75,7 +80,7 @@ test('public constants match the engine contract literally', () => {
   assert.equal(typeof engine.SYNTHETIC_LABEL, 'string');
   assert.ok(engine.SYNTHETIC_LABEL.includes('SYNTHETIC'));
   assert.ok(engine.SYNTHETIC_LABEL.includes('not customs law'));
-  assert.equal(engine.REPORT_SCHEMA_VERSION, 'originproof.report.v1');
+  assert.equal(engine.REPORT_SCHEMA_VERSION, 'originproof.report.v2');
   assert.deepEqual([...engine.CSV_EXPORT_COLUMNS], [
     'record_type', 'id', 'rule_id', 'rule_version', 'supplier_id', 'document_id', 'kind',
     'field', 'expected', 'observed', 'delta_units', 'text', 'data_classification',
@@ -171,7 +176,7 @@ test('golden finding OP01:MILL-1:production cites the absent required pair', () 
   assert.deepEqual(f.source, { rulePack: 'OP-DEMO-1', clause: 'OP01', illustrative: true });
   assert.equal(typeof f.rationale, 'string');
   assert.ok(f.rationale.length > 0);
-  assert.ok(f.path.includes('MILL-1'));
+  assert.ok(f.edges.some((e) => e.fromSupplierId === 'MILL-1' || e.toSupplierId === 'MILL-1'));
   assertInputRefsWellFormed(f);
   assert.ok(f.inputRefs.some((r) => r.pointer.startsWith('/requiredEvidence/3')), 'must cite the required pair');
 });
@@ -188,7 +193,7 @@ test('golden finding OP02:DOC-2 expects AA, observes BB, path RAW-1 -> MILL-1 ->
   assert.equal(f.expected, 'AA');
   assert.equal(f.observed, 'BB');
   assert.equal(f.deltaUnits, null);
-  assert.deepEqual(f.path, CHAIN);
+  assert.deepEqual(f.edges, CHAIN_EDGES);
   assert.deepEqual(f.source, { rulePack: 'OP-DEMO-1', clause: 'OP02', illustrative: true });
   assertInputRefsWellFormed(f);
   const docRef = f.inputRefs.find((r) => r.pointer.startsWith('/documents/1'));
@@ -208,7 +213,7 @@ test('golden finding OP03:DOC-3 expects 100, observes 90, delta -10', () => {
   assert.equal(f.observed, 90);
   assert.equal(f.deltaUnits, -10);
   assert.deepEqual(f.source, { rulePack: 'OP-DEMO-1', clause: 'OP03', illustrative: true });
-  assert.ok(f.path.includes('ASSEMBLER-1'));
+  assert.ok(f.edges.some((e) => e.fromSupplierId === 'ASSEMBLER-1' || e.toSupplierId === 'ASSEMBLER-1'));
   assertInputRefsWellFormed(f);
   const docRef = f.inputRefs.find((r) => r.pointer.startsWith('/documents/2'));
   assert.ok(docRef, 'must cite DOC-3 at /documents/2');
@@ -226,13 +231,13 @@ test('golden counts, evidence and lineage are exact', () => {
   assert.deepEqual(bySupplier['RAW-1'].upstream, []);
   assert.deepEqual(bySupplier['MILL-1'].upstream, ['RAW-1']);
   assert.deepEqual(bySupplier['MILL-1'].downstream, ['ASSEMBLER-1']);
-  assert.deepEqual(bySupplier['MILL-1'].path, CHAIN);
+  assert.deepEqual(bySupplier['MILL-1'].edges, CHAIN_EDGES);
   assert.deepEqual(bySupplier['ASSEMBLER-1'].downstream, []);
   assert.ok(bySupplier['ASSEMBLER-1'].upstream.includes('MILL-1'));
   assert.ok(bySupplier['RAW-1'].downstream.includes('MILL-1'));
 
   const doc2 = analysis.lineage.documents.find((d) => d.documentId === 'DOC-2');
-  assert.deepEqual(doc2, { documentId: 'DOC-2', supplierId: 'MILL-1', path: CHAIN });
+  assert.deepEqual(doc2, { documentId: 'DOC-2', supplierId: 'MILL-1', edges: CHAIN_EDGES });
   assert.deepEqual(analysis.lineage.documents.map((d) => d.documentId), ['DOC-1', 'DOC-2', 'DOC-3']);
 });
 
