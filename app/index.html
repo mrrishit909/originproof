@@ -35,7 +35,7 @@
 <main>
   <h1>OriginProof Workbench</h1>
   <p class="synthetic" id="synthetic-label" role="note">SYNTHETIC DEMO DATA</p>
-  <p class="muted">Bounded synthetic provenance slice. Deterministic engine, seeded fixtures only, no network. Known engine caveat: an aggregate-overflow defect (issue 7) is being fixed concurrently; this UI renders the engine's output verbatim, including structured errors.</p>
+  <p class="muted">Bounded synthetic provenance slice. Deterministic engine, seeded fixtures only, no network. Aggregate discrepancy sums are checked against safe-integer bounds; an overflowing candidate is rejected (AGGREGATE_OVERFLOW) before counts, report, or export; this UI renders the engine's output verbatim, including structured errors.</p>
 
   <div class="toolbar">
     <label for="fixture-select">Seeded fixture<select id="fixture-select" name="fixture"></select></label>
