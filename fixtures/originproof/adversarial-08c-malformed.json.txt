@@ -1,0 +1,1 @@
+{"schemaVersion": 1, "ruleVersion": "OP-DEMO-1", "shipment": {"id": "SHIP-1", "declaredCountry": "AA", "quantityUnits": 100}, "suppliers": [{"id": "RAW-1", "name": "Synthetic Raw Materials (fictional)"},

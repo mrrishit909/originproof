@@ -1,0 +1,16 @@
+{
+  "name": "originproof",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "OriginProof bounded synthetic provenance slice. Dependency-free; Node 24 built-ins only. Rule pack OP-DEMO-1 is fictional, not customs law.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test \"packages/originproof-engine/test/*.test.js\" \"tests/**/*.test.js\"",
+    "test:engine": "node --test \"packages/originproof-engine/test/*.test.js\"",
+    "test:reference": "node --test \"tests/originproof-reference/*.test.js\"",
+    "test:architecture": "node --test \"tests/architecture/*.test.js\""
+  }
+}

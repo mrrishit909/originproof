@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "ruleVersion": "OP-DEMO-1",
+  "shipment": { "id": "SHIP-1", "declaredCountry": "AA", "quantityUnits": 100 },
+  "suppliers": [
+    { "id": "RAW-1", "name": "Synthetic Raw Materials (fictional)" },
+    { "id": "MILL-1", "name": "Synthetic Mill (fictional)" },
+    { "id": "ASSEMBLER-1", "name": "Synthetic Assembler (fictional)" }
+  ],
+  "edges": [
+    { "id": "EDGE-1", "fromSupplierId": "RAW-1", "toSupplierId": "MILL-1" },
+    { "id": "EDGE-2", "fromSupplierId": "MILL-1", "toSupplierId": "ASSEMBLER-1" }
+  ],
+  "documents": [
+    { "id": "DOC-1", "shipmentId": "SHIP-1", "supplierId": "GHOST-9", "kind": "origin", "country": "AA", "quantityUnits": 100 },
+    { "id": "DOC-2", "shipmentId": "SHIP-1", "supplierId": "MILL-1", "kind": "origin", "country": "BB", "quantityUnits": 100 },
+    { "id": "DOC-3", "shipmentId": "SHIP-1", "supplierId": "ASSEMBLER-1", "kind": "origin", "country": "AA", "quantityUnits": 90 }
+  ],
+  "requiredEvidence": [
+    { "supplierId": "RAW-1", "kind": "origin" },
+    { "supplierId": "MILL-1", "kind": "origin" },
+    { "supplierId": "ASSEMBLER-1", "kind": "origin" },
+    { "supplierId": "MILL-1", "kind": "production" }
+  ]
+}
