@@ -50,7 +50,12 @@ else {
   stdout.write(`source: ${parsed.value.source.sourceName} (${parsed.value.source.byteLength} bytes)\n`);
   stdout.write(`status: ${a.status}  fingerprint: ${semanticFingerprint}\n`);
   stdout.write(`counts: ${JSON.stringify(a.counts)}\n`);
+  // OP-A02: render only the real input edges on the finding; never join suppliers into an invented path.
+  const formatEdges = (edges) =>
+    Array.isArray(edges) && edges.length > 0
+      ? edges.map((e) => `${e.id}:${e.fromSupplierId}->${e.toSupplierId}`).join(', ')
+      : '(none)';
   for (const f of a.findings) {
-    stdout.write(`- ${f.findingId}  expected=${JSON.stringify(f.expected)} observed=${JSON.stringify(f.observed)} delta=${f.deltaUnits}  path=${f.path.join(' -> ')}\n`);
+    stdout.write(`- ${f.findingId}  expected=${JSON.stringify(f.expected)} observed=${JSON.stringify(f.observed)} delta=${f.deltaUnits}  edges=${formatEdges(f.edges)}\n`);
   }
 }
