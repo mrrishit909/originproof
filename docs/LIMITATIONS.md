@@ -44,9 +44,9 @@ configuration and is not customs law.
 
 ## Engineering scope
 
-13. **No UI yet.** The user-journey UI, loading/empty/invalid/export-error screens,
-    keyboard access and mobile layout are specified but **not implemented or verified**
-    in this slice. Only engine-level behaviour is tested.
+13. **UI scope.** A synthetic browser workbench and a public homepage exist and run the
+    engine on the bundled fictional fixture. Their visual, keyboard and mobile behaviour
+    is checked by hand, not by automated browser tests, and real data is not supported.
 14. **No typecheck.** Types are JSDoc only; nothing enforces them at build time.
 15. **No persistence, authentication, multi-user or audit log.** The engine is a pure
     function library.
