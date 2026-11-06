@@ -1,0 +1,119 @@
+/* OriginProof public page. Local font stacks only; no external requests. */
+:root {
+  --navy: #173042; --paper: #f2efe6; --forest: #286455; --ochre: #a77a21; --ochre-ink: #7a5710; --white: #fff;
+  --muted: #4a5a65; --rule: #c9c3b0; --focus: #0b5fff;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: "Source Sans 3", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--navy); font: 17px/1.55 var(--sans); overflow-x: hidden; }
+code { font-family: var(--mono); font-size: .88em; }
+a { color: var(--forest); }
+a:focus-visible, button:focus-visible, #detail:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.sr, .route { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: 8px; top: -60px; background: var(--navy); color: var(--white); padding: 10px 14px; z-index: 5; }
+.skip:focus { top: 8px; }
+
+.top { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; justify-content: space-between; padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--rule); }
+.mark { margin: 0; font: 700 18px var(--serif); letter-spacing: .02em; }
+.mark span { color: var(--ochre); }
+.synthetic { margin: 0; font-size: 14px; background: var(--white); border: 1px solid var(--ochre); padding: 6px 12px; }
+
+.kicker { margin: 0 0 10px; font: 600 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--forest); }
+h1, h2 { font-family: var(--serif); font-weight: 600; line-height: 1.12; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(30px, 4.4vw, 54px); }
+h2 { font-size: clamp(24px, 3vw, 34px); }
+
+.hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(24px, 4vw, 56px); align-items: center; padding: clamp(28px, 5vw, 64px) 0 clamp(28px, 5vw, 64px) clamp(16px, 4vw, 48px); }
+.lede { font-size: 19px; max-width: 34em; margin: 20px 0; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 24px 0 12px; }
+.cta { display: inline-block; background: var(--navy); color: var(--white); text-decoration: none; padding: 14px 24px; min-height: 48px; font-weight: 700; border: 2px solid var(--navy); }
+.cta:hover { background: var(--forest); border-color: var(--forest); }
+.textlink { font-weight: 600; }
+.fine { font-size: 14px; color: var(--muted); max-width: 40em; }
+
+.sheet { margin: 0; min-width: 0; }
+.atlas { display: block; width: 100%; height: auto; border: 1px solid var(--navy); border-right: 0; box-shadow: 10px 12px 0 rgba(23, 48, 66, .08); }
+.sheet figcaption { font-size: 14px; color: var(--muted); padding: 10px clamp(16px, 4vw, 48px) 0 0; }
+.paper { fill: var(--paper); } .gridline { fill: none; stroke: #ddd7c6; stroke-width: 1; } .frame { fill: none; stroke: var(--navy); stroke-width: 1; }
+.atlas text { font-family: var(--mono); font-size: 12px; fill: var(--navy); }
+.atlas .cap, .atlas .tier-label text { font-size: 11px; letter-spacing: .1em; fill: var(--forest); }
+.atlas .note, .atlas .edge-label { font-size: 11px; fill: var(--muted); }
+.atlas .val { font-size: 14px; font-weight: 700; }
+.plate rect { fill: var(--white); stroke: var(--forest); stroke-width: 1.5; }
+.supplier rect { fill: var(--white); stroke: var(--navy); stroke-width: 2; }
+.supplier .id { font-weight: 700; font-size: 14px; } .supplier .nm { font-family: var(--serif); font-size: 14px; }
+.edge { fill: none; stroke: var(--forest); stroke-width: 2.5; } .arrowhead { fill: var(--forest); }
+.stem { fill: none; stroke: var(--navy); stroke-width: 1.5; }
+.doc rect { fill: var(--white); stroke: var(--navy); stroke-width: 1.25; transition: fill .2s, stroke .2s; }
+.doc.slot rect { fill: var(--paper); stroke-dasharray: 5 4; }
+.flag rect { fill: var(--ochre-ink); } .atlas .flag text { fill: var(--white); font-size: 11px; font-weight: 700; text-anchor: middle; }
+[data-finding].is-on rect:first-child { fill: #f3e4bd; stroke: var(--ochre-ink); stroke-width: 2.5; }
+.atlas .k-doc { fill: var(--white); stroke: var(--navy); } .atlas .k-slot { fill: var(--paper); stroke: var(--navy); stroke-dasharray: 4 3; } .atlas .k-flag { fill: var(--ochre-ink); }
+.atlas .legend text { font-size: 11px; }
+
+.proof, .rules, .limits, .close { padding: clamp(28px, 5vw, 60px) clamp(16px, 4vw, 48px); border-top: 1px solid var(--rule); }
+.proof { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(20px, 4vw, 56px); background: var(--white); }
+.tally { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0; margin: 20px 0 0; border-top: 2px solid var(--navy); }
+.tally div { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); }
+.tally dt { font: 12px var(--mono); color: var(--muted); } .tally dd { margin: 0; font: 600 26px var(--serif); }
+.tally dd.status { font: 600 12px/1.3 var(--mono); padding-top: 6px; overflow-wrap: normal; white-space: nowrap; }
+.tally div:first-child { grid-column: span 2; }
+.tally dt, .tally dd { min-width: 0; overflow-wrap: anywhere; }
+.findings { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--navy); }
+.findings button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 4.5em 1fr; gap: 4px 14px; width: 100%; padding: 14px 8px; min-height: 48px; border-bottom: 1px solid var(--rule); cursor: pointer; }
+.findings button:hover { background: #f7f4ea; }
+.findings button:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.findings button[aria-pressed="true"] { background: #f3e4bd; }
+.findings .rid { font: 700 14px var(--mono); color: var(--ochre-ink); }
+.findings .fid { font: 14px var(--mono); word-break: break-all; }
+.findings .why { grid-column: 2; font-size: 15px; color: var(--muted); }
+.detail { margin-top: 16px; padding: 14px 16px; border: 2px solid var(--navy); background: var(--paper); font-size: 15px; }
+.detail h3 { margin: 0 0 8px; font: 600 18px var(--serif); }
+.detail dl { margin: 0; display: grid; grid-template-columns: 9em 1fr; gap: 4px 12px; } .detail dt { font: 13px var(--mono); color: var(--muted); } .detail dd { margin: 0; font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+.fallback { padding: 12px 16px; border: 2px solid var(--ochre-ink); background: #fbf3dc; }
+#live-status { font-size: 15px; color: var(--muted); }
+
+.rules table { width: 100%; max-width: 62em; margin-top: 20px; border-collapse: collapse; font-size: 16px; }
+.rules th, .rules td { text-align: left; vertical-align: top; padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); }
+.rules thead th { font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--forest); border-bottom: 2px solid var(--navy); }
+.rules tbody th { font-family: var(--mono); color: var(--ochre-ink); }
+.limits { background: var(--navy); color: var(--paper); } .limits .kicker { color: #9fd0bf; } .limits a { color: #cfe8df; }
+.limits ul { max-width: 46em; padding-left: 1.1em; margin: 20px 0 0; } .limits li { margin: 8px 0; }
+.close { text-align: left; } .close p { max-width: 36em; }
+footer { padding: 20px clamp(16px, 4vw, 48px) 40px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--rule); }
+footer p { margin: 0; }
+
+/* Motion: the two declared edges draw once; selection fades. Off under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .atlas .edge { stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 1.1s .2s ease-out forwards; }
+  .atlas .edge:nth-of-type(2) { animation-delay: .7s; }
+  .atlas .legend .edge { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+}
+
+/* Phone: relationships first, as an ordered route; the chart sheet is for wider screens. */
+@media (max-width: 759px) {
+  body { font-size: 16px; }
+  .hero { grid-template-columns: 1fr; padding-right: clamp(16px, 4vw, 48px); }
+  .atlas { display: none; }
+  .route { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; list-style: none; margin: 0; padding: 0 0 0 22px; border-left: 3px solid var(--forest); }
+  .route li { margin: 0; padding: 0 0 14px; }
+  .route .rid { margin: 0; font: 700 16px var(--mono); position: relative; }
+  .route .rid::before { content: ""; position: absolute; left: -31px; top: 5px; width: 12px; height: 12px; background: var(--white); border: 3px solid var(--navy); }
+  .route .rid span { display: block; font: 13px var(--sans); color: var(--muted); }
+  .route ul { list-style: none; margin: 8px 0 0; padding: 0; }
+  .route ul li { padding: 8px 10px; margin: 0 0 6px; background: var(--white); border: 1px solid var(--navy); font: 13px var(--mono); }
+  .route ul li.absent { border-style: dashed; background: var(--paper); }
+  .route ul li.is-on { background: #f3e4bd; border: 2px solid var(--ochre-ink); }
+  .route .eid { margin: 0; font: 13px var(--mono); color: var(--forest); }
+  .route .eid::before { content: "↓ "; }
+  .route .ship { margin-top: 10px; padding-top: 14px; border-top: 1px dashed var(--navy); }
+  .pill { background: var(--ochre-ink); color: var(--white); padding: 1px 8px; border-radius: 10px; font-size: 11px; margin-left: 6px; white-space: nowrap; }
+  .proof { grid-template-columns: 1fr; }
+  .detail dl { grid-template-columns: 1fr; } .detail dd { margin-bottom: 6px; }
+  .cta { display: block; text-align: center; width: 100%; }
+}
+@media (min-width: 760px) and (max-width: 1000px) { .hero { grid-template-columns: 1fr; padding-right: 0; } .hero-copy { padding-right: clamp(16px, 4vw, 48px); } }

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OriginProof: a synthetic provenance case, traced edge by edge</title>
+<meta name="description" content="OriginProof is a bounded, synthetic, one-shipment engine. It checks declared supplier relationships against evidence documents using three fictional rules. Demo data only.">
+<link rel="stylesheet" href="app/landing.css">
+</head>
+<body>
+<a class="skip" href="#case">Skip to the case sheet</a>
+
+<header class="top">
+  <p class="mark"><span aria-hidden="true">◈</span> OriginProof</p>
+  <p class="synthetic" role="note"><strong>SYNTHETIC DATA.</strong> Fictional suppliers, fictional rules, placeholder labels AA and BB.</p>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="hero-copy">
+      <p class="kicker">Sheet 1 of 1 · one shipment · three fictional rules</p>
+      <h1 id="h-hero">Follow one shipment’s paper back through the suppliers who declared it.</h1>
+      <p class="lede">OriginProof reads a single shipment record, the supplier links someone declared, and the documents attached to each supplier. It then checks three fictional evidence rules and shows which record each finding points at. It does not decide anything about the shipment.</p>
+      <p class="cta-row">
+        <a class="cta" href="app/">Open the workbench</a>
+        <a class="textlink" href="#limits">What it does not do</a>
+      </p>
+      <p class="fine">The workbench runs the same engine in your browser on bundled fixtures. No account, no upload, no network call after load.</p>
+    </div>
+
+    <figure class="sheet" id="case" aria-labelledby="sheet-cap">
+      <svg class="atlas" viewBox="0 0 960 520" role="img" aria-labelledby="atlas-t atlas-d" focusable="false">
+        <title id="atlas-t">Chart of the bundled golden case: three suppliers, two declared edges, their documents and three findings</title>
+        <desc id="atlas-d">RAW-1 supplies MILL-1, and MILL-1 supplies ASSEMBLER-1, by declared edges EDGE-1 and EDGE-2. Each supplier has an origin document. MILL-1 also has a required production document that is missing. Shipment SHIP-1 is shown separately because no edge to it is declared. Findings: OP01 on the missing MILL-1 production document, OP02 on DOC-2 whose country BB differs from the declared AA, OP03 on DOC-3 whose quantity 90 differs from 100.</desc>
+
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" class="gridline"/></pattern>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 1L9 5L0 9z" class="arrowhead"/></marker>
+        </defs>
+        <rect width="960" height="520" class="paper"/>
+        <rect width="960" height="520" fill="url(#grid)"/>
+        <rect x="6" y="6" width="948" height="508" class="frame"/>
+
+        <g class="plate">
+          <rect x="600" y="40" width="330" height="104"/>
+          <text x="614" y="62" class="cap">SHIPMENT SHIP-1</text>
+          <text x="614" y="84" class="val">declared AA · 100 units</text>
+          <text x="614" y="104" class="note">Documents cite it by id.</text>
+          <text x="614" y="122" class="note">No edge to a supplier is declared.</text>
+        </g>
+
+        <g class="tier-label">
+          <text x="40" y="70">POSITION 1 · upstream</text>
+          <text x="340" y="200">POSITION 2</text>
+          <text x="640" y="330">POSITION 3 · downstream</text>
+        </g>
+
+        <path class="edge" d="M290 115H315V245H340" marker-end="url(#arrow)"/>
+        <path class="edge" d="M590 245H615V375H640" marker-end="url(#arrow)"/>
+        <text x="322" y="165" class="edge-label">EDGE-1</text>
+        <text x="622" y="300" class="edge-label">EDGE-2</text>
+
+        <g class="supplier"><rect x="40" y="80" width="250" height="70"/><text x="54" y="104" class="id">RAW-1</text><text x="54" y="124" class="nm">Synthetic Raw Materials</text><text x="54" y="141" class="note">(fictional)</text></g>
+        <g class="supplier"><rect x="340" y="210" width="250" height="70"/><text x="354" y="234" class="id">MILL-1</text><text x="354" y="254" class="nm">Synthetic Mill</text><text x="354" y="271" class="note">(fictional)</text></g>
+        <g class="supplier"><rect x="640" y="340" width="250" height="70"/><text x="654" y="364" class="id">ASSEMBLER-1</text><text x="654" y="384" class="nm">Synthetic Assembler</text><text x="654" y="401" class="note">(fictional)</text></g>
+
+        <path class="stem" d="M60 150V165M360 280V295M360 280V343M660 410V425"/>
+
+        <g class="doc"><rect x="40" y="165" width="250" height="38"/><text x="54" y="189">DOC-1 · origin · AA · 100</text></g>
+        <g class="doc" data-finding="OP02:DOC-2"><rect x="340" y="295" width="250" height="38"/><text x="354" y="319">DOC-2 · origin · BB · 100</text>
+          <g class="flag"><rect x="532" y="303" width="48" height="22" rx="11"/><text x="556" y="318">OP02</text></g></g>
+        <g class="doc slot" data-finding="OP01:MILL-1:production"><rect x="340" y="343" width="250" height="38"/><text x="354" y="367">MILL-1 · production · none</text>
+          <g class="flag"><rect x="532" y="351" width="48" height="22" rx="11"/><text x="556" y="366">OP01</text></g></g>
+        <g class="doc" data-finding="OP03:DOC-3"><rect x="640" y="425" width="250" height="38"/><text x="654" y="449">DOC-3 · origin · AA · 90</text>
+          <g class="flag"><rect x="832" y="433" width="48" height="22" rx="11"/><text x="856" y="448">OP03</text></g></g>
+
+        <g class="legend" transform="translate(40 300)">
+          <text x="0" y="0" class="cap">KEY</text>
+          <rect x="0" y="12" width="26" height="14" class="k-doc"/><text x="36" y="24">document present</text>
+          <rect x="0" y="36" width="26" height="14" class="k-slot"/><text x="36" y="48">required, no document</text>
+          <rect x="0" y="60" width="34" height="16" rx="8" class="k-flag"/><text x="44" y="73">engine finding</text>
+          <path d="M0 96H26" class="edge" marker-end="url(#arrow)"/><text x="36" y="100">declared edge, upstream to downstream</text>
+        </g>
+        <text x="40" y="496" class="note">Position is order along declared edges. It is not distance, route or location. No geography is drawn.</text>
+      </svg>
+
+      <ol class="route" aria-label="Declared supplier chain with attached documents">
+        <li><p class="rid">RAW-1 <span>position 1, upstream</span></p>
+          <ul><li>DOC-1 · origin · AA · 100 units</li></ul></li>
+        <li class="edge-li"><p class="eid">EDGE-1 declares RAW-1 → MILL-1</p></li>
+        <li><p class="rid">MILL-1 <span>position 2</span></p>
+          <ul>
+            <li data-finding="OP02:DOC-2">DOC-2 · origin · BB · 100 units <b class="pill">OP02</b></li>
+            <li data-finding="OP01:MILL-1:production" class="absent">production document: none <b class="pill">OP01</b></li>
+          </ul></li>
+        <li class="edge-li"><p class="eid">EDGE-2 declares MILL-1 → ASSEMBLER-1</p></li>
+        <li><p class="rid">ASSEMBLER-1 <span>position 3, downstream</span></p>
+          <ul><li data-finding="OP03:DOC-3">DOC-3 · origin · AA · 90 units <b class="pill">OP03</b></li></ul></li>
+        <li class="ship"><p class="rid">SHIP-1 <span>shown apart: no edge to it is declared</span></p>
+          <ul><li>declared AA · 100 units</li></ul></li>
+      </ol>
+
+      <figcaption id="sheet-cap">The bundled <code>golden.json</code> case. The drawing is a fixed illustration of that file; the flags below it come from running the engine on it.</figcaption>
+    </figure>
+  </section>
+
+  <section class="proof" aria-labelledby="h-proof">
+    <div class="proof-head">
+      <p class="kicker">Live from the engine</p>
+      <h2 id="h-proof">What the engine finds in that case</h2>
+      <p id="live-status" role="status" aria-live="polite">Running the engine on <code>golden.json</code>…</p>
+      <dl class="tally" id="tally" hidden></dl>
+    </div>
+    <div class="proof-body">
+      <ul id="findings" class="findings" aria-label="Findings from the engine run"></ul>
+      <div id="detail" class="detail" tabindex="-1" hidden aria-label="Selected finding"></div>
+      <p id="live-fallback" class="fallback" hidden>The in-page engine run did not complete. The drawing above and the rules below are still accurate for the bundled case; the workbench runs the same engine and shows structured errors if something is wrong. <a href="app/">Open the workbench</a>.</p>
+      <noscript><p class="fallback">This page runs the engine with JavaScript. Without it you still have the drawing, the rules and the limits; the <a href="app/">workbench</a> needs JavaScript too.</p></noscript>
+    </div>
+  </section>
+
+  <section class="rules" aria-labelledby="h-rules">
+    <p class="kicker">Rule pack OP-DEMO-1 · fictional</p>
+    <h2 id="h-rules">Three comparisons, written down in full</h2>
+    <table>
+      <caption class="sr">The three rules in the fictional pack</caption>
+      <thead><tr><th scope="col">Rule</th><th scope="col">Flags when</th><th scope="col">In the case above</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">OP01</th><td>A required supplier and document kind has no document.</td><td>MILL-1 requires a production document and has none.</td></tr>
+        <tr><th scope="row">OP02</th><td>An origin document’s country label differs from the shipment’s declared label.</td><td>DOC-2 says BB; the shipment declares AA.</td></tr>
+        <tr><th scope="row">OP03</th><td>An origin document’s quantity differs from the shipment’s quantity.</td><td>DOC-3 says 90; the shipment declares 100. Difference: 10 units.</td></tr>
+      </tbody>
+    </table>
+    <p class="fine">The rules compare values inside this fictional contract. They do not claim suppliers must share a country or a quantity. Every finding carries the input pointers it cites, and a human adds notes separately; notes never change findings.</p>
+  </section>
+
+  <section class="limits" id="limits" aria-labelledby="h-limits">
+    <p class="kicker">Boundaries</p>
+    <h2 id="h-limits">What this is not</h2>
+    <ul>
+      <li>Not customs law, a rule of origin, or a tariff or trade-agreement check.</li>
+      <li>No sanctions or denied-party screening.</li>
+      <li>No geography. AA and BB are opaque placeholder labels, and nothing is inferred from supplier location or routing.</li>
+      <li>No clearance decision. The only statuses are <code>FINDINGS_PRESENT</code> and <code>NO_FINDINGS</code>, and the second means only that three fictional rules produced nothing.</li>
+      <li>One shipment per input. Supplier links are taken as declared, never discovered or scored.</li>
+      <li>The report fingerprint is an unkeyed hash that catches accidental drift. It is not a signature.</li>
+      <li>Qualified review of real policy would have to come before any real-world use. The full list is in the repository’s <code>docs/LIMITATIONS.md</code>.</li>
+    </ul>
+  </section>
+
+  <section class="close" aria-labelledby="h-close">
+    <h2 id="h-close">Run it yourself</h2>
+    <p>Pick a bundled fixture in the workbench, including adversarial ones that trigger validation errors, open a finding, add a review note, and export JSON or CSV.</p>
+    <p><a class="cta" href="app/">Open the workbench</a></p>
+  </section>
+</main>
+
+<footer>
+  <p>OriginProof is a synthetic demonstration. No real companies, countries, shipments or customers appear on this page.</p>
+</footer>
+<script type="module" src="app/landing.js"></script>
+</body>
+</html>
